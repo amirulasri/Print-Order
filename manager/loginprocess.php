@@ -15,8 +15,8 @@ if (isset($_POST['manageruser']) && isset($_POST['managerpass'])) {
             $result = $statementlogin->fetch();
             if(!empty($result['manageruser'])){
                 if(password_verify($managerpass, $result['managerpass'])){
-                    $_SESSION['managersession'] = $manageruser;
-                    
+                    setcookie("managerusercookie", $result['manageruser'], time()+2678400, "/"); // 86400 = 1 day
+                    header('location: printorder');
                 }else{
                     header('location: login?error=3'); //PASSWORD NOT MATCH
                 }

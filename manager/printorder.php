@@ -1,3 +1,11 @@
+<?php
+if (isset($_COOKIE['managerusercookie'])) {
+} else {
+    echo "FAILED COOKIE";
+    die(header('location: login'));
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -31,7 +39,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <input class="btn btn-primary" type="submit" form="addorderform" value="Add Order"/>
+                    <input class="btn btn-primary" type="submit" form="addorderform" value="Add Order" />
                 </div>
             </div>
         </div>
