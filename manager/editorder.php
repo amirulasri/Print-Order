@@ -64,35 +64,22 @@ if (isset($_COOKIE['managerusercookie'])) {
 </head>
 
 <body>
-    <div id="additempopover" class="d-none">
-        <div class="input-group">
-            <input type="text" class="form-control" placeholder="Item name">
-            <button class="btn btn-outline-primary popover-dismiss" type="button" data-toggle="popover" data-placement="bottom" data-html="true" data-title="Search">
-                Add
-            </button>
-        </div>
-    </div>
-    <div id="blackquantitypopover" class="d-none">
-        <div class="input-group">
-            <input type="number" class="form-control" min="0" placeholder="Quantity">
-            <button class="btn btn-outline-primary popover-dismiss" type="button" data-toggle="popover" data-placement="bottom" data-html="true" data-title="Search">
-                OK
-            </button>
-        </div>
-    </div>
-    <div id="colorquantitypopover" class="d-none">
-        <div class="input-group">
-            <input type="number" class="form-control" min="0" placeholder="Quantity">
-            <button class="btn btn-outline-primary popover-dismiss" type="button" data-toggle="popover" data-placement="bottom" data-html="true" data-title="Search">
-                OK
-            </button>
-        </div>
-    </div>
-    <div id="papertypepopover" class="d-none">
-        <div class="input-group">
-            <button class="btn btn-outline-info btn-sm">A4</button>
-            <button class="btn btn-outline-info btn-sm">A3</button>
-            <button class="btn btn-outline-info btn-sm">A1</button>
+    <!-- Modal Edit Item -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="edititem" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Edit detail here
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
         </div>
     </div>
     <div class="container">
@@ -166,21 +153,11 @@ if (isset($_COOKIE['managerusercookie'])) {
                                             <td><?php echo $increment++ ?></td>
                                             <td><?php echo $row[1]; ?></td>
                                             <td>
-                                                <button class="btn btn-primary btn-sm callpapertypepopover" data-toggle="popover" id="papertypebtn<?php echo $row[0]; ?>" onclick="updatepapertype(<?php echo $row[0]; ?>)">
+                                                <button class="btn btn-primary btn-sm callpapertypepopover" data-toggle="popover" id="papertypebtn<?php echo $row[0]; ?>">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark" viewBox="0 0 16 16">
                                                         <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z" />
                                                     </svg>
-                                                </button>
-                                                <button class="btn btn-secondary btn-sm callblackquantitypopover" data-toggle="popover" title="Black white quantity">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-circle-half" viewBox="0 0 16 16">
-                                                        <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z" />
-                                                    </svg>
-                                                </button>
-                                                <button class="btn btn-warning btn-sm callcolorquantitypopover" data-toggle="popover" title="Color quantity">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-palette" viewBox="0 0 16 16">
-                                                        <path d="M8 5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm4 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM5.5 7a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm.5 6a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
-                                                        <path d="M16 8c0 3.15-1.866 2.585-3.567 2.07C11.42 9.763 10.465 9.473 10 10c-.603.683-.475 1.819-.351 2.92C9.826 14.495 9.996 16 8 16a8 8 0 1 1 8-8zm-8 7c.611 0 .654-.171.655-.176.078-.146.124-.464.07-1.119-.014-.168-.037-.37-.061-.591-.052-.464-.112-1.005-.118-1.462-.01-.707.083-1.61.704-2.314.369-.417.845-.578 1.272-.618.404-.038.812.026 1.16.104.343.077.702.186 1.025.284l.028.008c.346.105.658.199.953.266.653.148.904.083.991.024C14.717 9.38 15 9.161 15 8a7 7 0 1 0-7 7z" />
-                                                    </svg>
+                                                    Edit
                                                 </button>
                                                 <br>RM 0.00
                                             </td>
@@ -226,71 +203,6 @@ if (isset($_COOKIE['managerusercookie'])) {
             </div>
         </div>
     </div>
-    <script>
-        //ADD ITEM POPOVER HANDLER
-        const popover = new bootstrap.Popover(document.querySelector('.callAdditempopover'), {
-            container: 'body',
-            title: 'Add Item',
-            html: true,
-            placement: 'bottom',
-            sanitize: false,
-            content() {
-                return document.querySelector('#additempopover').innerHTML;
-            }
-        });
-
-        //PAPER TYPE POPOVER HANDLER
-
-        popover2 = new bootstrap.Popover(document.querySelector('.callpapertypepopover'), {
-            container: 'body',
-            title: 'Paper Type',
-            html: true,
-            placement: 'bottom',
-            sanitize: false,
-            content() {
-                return document.querySelector('#papertypepopover').innerHTML;
-            }
-        })
-
-        //BLACK WHITE QUANTITY POPOVER HANDLER
-        const popover3 = new bootstrap.Popover(document.querySelector('.callblackquantitypopover'), {
-            container: 'body',
-            title: 'Black White Quantity',
-            html: true,
-            placement: 'bottom',
-            sanitize: false,
-            content() {
-                return document.querySelector('#blackquantitypopover').innerHTML;
-            }
-        })
-
-        //COLOR QUANTITY POPOVER HANDLER
-        const popover4 = new bootstrap.Popover(document.querySelector('.callcolorquantitypopover'), {
-            container: 'body',
-            title: 'Color Quantity',
-            html: true,
-            placement: 'bottom',
-            sanitize: false,
-            content() {
-                return document.querySelector('#colorquantitypopover').innerHTML;
-            }
-        })
-
-        $('body').on('click', function(e) {
-            $('[data-toggle="popover"]').each(function() {
-                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-                    $(this).popover('hide');
-                }
-            });
-        });
-
-        function updatepapertype(id) {
-           // var btnpapertype = document.getElementById("papertypebtn" + id);
-           // launchpopoverpapertype(btnpapertype);
-            //var currentpopover = bootstrap.Popover.getInstance(btnpapertype);
-           // console.log(currentpopover);
-        }
-    </script>
 </body>
 
 </html>
