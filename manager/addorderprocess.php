@@ -9,9 +9,10 @@ if (isset($_COOKIE['managerusercookie'])) {
             try {
                 $addprintorder = "INSERT INTO orders VALUES (NULL, '$custname', '$printabout', '', '$manageruser')";
                 $conn->exec($addprintorder);
-                header('location: login');
+                $lastid = $conn->lastInsertId();
+                header('location: editorder?order='.$lastid);
             } catch (PDOException $e) {
-                header('location: login?error=1');
+                header('location: printorder');
                 echo $e->getMessage();
             }
         }

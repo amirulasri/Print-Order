@@ -2,7 +2,6 @@
 include("../conn.php");
 $manageruser = "";
 $managerpass = "";
-session_start();
 
 if (isset($_POST['manageruser']) && isset($_POST['managerpass'])) {
     if (!empty($_POST['manageruser']) && !empty($_POST['managerpass'])) {
@@ -15,7 +14,7 @@ if (isset($_POST['manageruser']) && isset($_POST['managerpass'])) {
             $result = $statementlogin->fetch();
             if(!empty($result['manageruser'])){
                 if(password_verify($managerpass, $result['managerpass'])){
-                    setcookie("managerusercookie", $result['manageruser'], time()+2678400, "/"); // 86400 = 1 day
+                    setcookie("managerusercookie", $result['manageruser'], time()+2678400, "/"); // = 1 month
                     header('location: printorder');
                 }else{
                     header('location: login?error=3'); //PASSWORD NOT MATCH
