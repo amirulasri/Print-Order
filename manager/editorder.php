@@ -56,6 +56,7 @@ if (isset($_COOKIE['managerusercookie'])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../jquery.js"></script>
     <link rel="stylesheet" href="../../bootstrap-5.1.3-dist/css/bootstrap.min.css">
     <script src="../../bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="../style.css">
@@ -65,18 +66,33 @@ if (isset($_COOKIE['managerusercookie'])) {
 <body>
     <div id="additempopover" class="d-none">
         <div class="input-group">
-            <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username with two button addons" aria-describedby="button-addon1">
-            <button class="btn btn-outline-primary" type="button" data-toggle="popover" data-placement="bottom" data-html="true" data-title="Search">
+            <input type="text" class="form-control" placeholder="Item name">
+            <button class="btn btn-outline-primary popover-dismiss" type="button" data-toggle="popover" data-placement="bottom" data-html="true" data-title="Search">
+                Add
+            </button>
+        </div>
+    </div>
+    <div id="blackquantitypopover" class="d-none">
+        <div class="input-group">
+            <input type="number" class="form-control" min="0" placeholder="Quantity">
+            <button class="btn btn-outline-primary popover-dismiss" type="button" data-toggle="popover" data-placement="bottom" data-html="true" data-title="Search">
                 OK
             </button>
         </div>
     </div>
-    <div id="edititempopover" class="d-none">
+    <div id="colorquantitypopover" class="d-none">
         <div class="input-group">
-            <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username with two button addons" aria-describedby="button-addon1">
-            <button class="btn btn-outline-primary" type="button" data-toggle="popover" data-placement="bottom" data-html="true" data-title="Search">
+            <input type="number" class="form-control" min="0" placeholder="Quantity">
+            <button class="btn btn-outline-primary popover-dismiss" type="button" data-toggle="popover" data-placement="bottom" data-html="true" data-title="Search">
                 OK
             </button>
+        </div>
+    </div>
+    <div id="papertypepopover" class="d-none">
+        <div class="input-group">
+            <button class="btn btn-outline-info btn-sm">A4</button>
+            <button class="btn btn-outline-info btn-sm">A3</button>
+            <button class="btn btn-outline-info btn-sm">A1</button>
         </div>
     </div>
     <div class="container">
@@ -126,19 +142,16 @@ if (isset($_COOKIE['managerusercookie'])) {
                             </tbody>
                         </table>
                     </div>
-                    <br>
-                    <div class="pricedisplay">
-                        Total <br>
-                        RM 0.00
-                    </div>
                 </div>
-                <div class="col-sm-8">
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
                     <br>
                     <div class="inframe">
                         <table class="table table-dark">
                             <thead>
                                 <tr>
-                                    <th colspan="3">Items <button class="btn btn-primary btn-sm callAdditempopover">Add new item</button> <button class="btn btn-primary btn-sm callEdititempopover">Add new item</button></th>
+                                    <th colspan="4">Items <a class="btn btn-primary btn-sm callAdditempopover" data-toggle="popover" tabindex="0">Add new item</a></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -152,6 +165,25 @@ if (isset($_COOKIE['managerusercookie'])) {
                                         <tr>
                                             <td><?php echo $increment++ ?></td>
                                             <td><?php echo $row[1]; ?></td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm callpapertypepopover" data-toggle="popover" id="papertypebtn<?php echo $row[0]; ?>" onclick="updatepapertype(<?php echo $row[0]; ?>)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark" viewBox="0 0 16 16">
+                                                        <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z" />
+                                                    </svg>
+                                                </button>
+                                                <button class="btn btn-secondary btn-sm callblackquantitypopover" data-toggle="popover" title="Black white quantity">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-circle-half" viewBox="0 0 16 16">
+                                                        <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z" />
+                                                    </svg>
+                                                </button>
+                                                <button class="btn btn-warning btn-sm callcolorquantitypopover" data-toggle="popover" title="Color quantity">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-palette" viewBox="0 0 16 16">
+                                                        <path d="M8 5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm4 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM5.5 7a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm.5 6a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
+                                                        <path d="M16 8c0 3.15-1.866 2.585-3.567 2.07C11.42 9.763 10.465 9.473 10 10c-.603.683-.475 1.819-.351 2.92C9.826 14.495 9.996 16 8 16a8 8 0 1 1 8-8zm-8 7c.611 0 .654-.171.655-.176.078-.146.124-.464.07-1.119-.014-.168-.037-.37-.061-.591-.052-.464-.112-1.005-.118-1.462-.01-.707.083-1.61.704-2.314.369-.417.845-.578 1.272-.618.404-.038.812.026 1.16.104.343.077.702.186 1.025.284l.028.008c.346.105.658.199.953.266.653.148.904.083.991.024C14.717 9.38 15 9.161 15 8a7 7 0 1 0-7 7z" />
+                                                    </svg>
+                                                </button>
+                                                <br>RM 0.00
+                                            </td>
                                             <td><?php
                                                 $statustext = "";
                                                 $badgecolor = "";
@@ -192,42 +224,13 @@ if (isset($_COOKIE['managerusercookie'])) {
                     </div>
                 </div>
             </div>
-            <br>
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="inframe">
-                        <p style="color: white;"><strong>Complete Print</strong></p>
-                        <table class="table table-dark">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Total pages</th>
-                                    <th>Total price</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>12312</td>
-                                    <td>13</td>
-                                    <td>RM 3.80</td>
-                                    <td><button class="btn btn-primary">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-                                                <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
-                                            </svg>
-                                        </button></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
     <script>
+        //ADD ITEM POPOVER HANDLER
         const popover = new bootstrap.Popover(document.querySelector('.callAdditempopover'), {
             container: 'body',
-            title: 'Search',
+            title: 'Add Item',
             html: true,
             placement: 'bottom',
             sanitize: false,
@@ -236,16 +239,57 @@ if (isset($_COOKIE['managerusercookie'])) {
             }
         });
 
-        const popover2 = new bootstrap.Popover(document.querySelector('.callEdititempopover'), {
+        //PAPER TYPE POPOVER HANDLER
+
+        popover2 = new bootstrap.Popover(document.querySelector('.callpapertypepopover'), {
             container: 'body',
-            title: 'Search',
+            title: 'Paper Type',
             html: true,
             placement: 'bottom',
             sanitize: false,
             content() {
-                return document.querySelector('#edititempopover').innerHTML;
+                return document.querySelector('#papertypepopover').innerHTML;
             }
         })
+
+        //BLACK WHITE QUANTITY POPOVER HANDLER
+        const popover3 = new bootstrap.Popover(document.querySelector('.callblackquantitypopover'), {
+            container: 'body',
+            title: 'Black White Quantity',
+            html: true,
+            placement: 'bottom',
+            sanitize: false,
+            content() {
+                return document.querySelector('#blackquantitypopover').innerHTML;
+            }
+        })
+
+        //COLOR QUANTITY POPOVER HANDLER
+        const popover4 = new bootstrap.Popover(document.querySelector('.callcolorquantitypopover'), {
+            container: 'body',
+            title: 'Color Quantity',
+            html: true,
+            placement: 'bottom',
+            sanitize: false,
+            content() {
+                return document.querySelector('#colorquantitypopover').innerHTML;
+            }
+        })
+
+        $('body').on('click', function(e) {
+            $('[data-toggle="popover"]').each(function() {
+                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                    $(this).popover('hide');
+                }
+            });
+        });
+
+        function updatepapertype(id) {
+           // var btnpapertype = document.getElementById("papertypebtn" + id);
+           // launchpopoverpapertype(btnpapertype);
+            //var currentpopover = bootstrap.Popover.getInstance(btnpapertype);
+           // console.log(currentpopover);
+        }
     </script>
 </body>
 
