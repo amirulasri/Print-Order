@@ -65,15 +65,15 @@ if (isset($_COOKIE['managerusercookie'])) {
 
 <body>
     <!-- Modal Edit Item -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="edititem" aria-hidden="true">
+    <div class="modal fade" id="edititemmodal" tabindex="-1" aria-labelledby="edititem" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Edit Item</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    Edit detail here
+                <div class="modal-body" id="edititemdatamodal">
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -141,52 +141,8 @@ if (isset($_COOKIE['managerusercookie'])) {
                                     <th colspan="4">Items <a class="btn btn-primary btn-sm callAdditempopover" data-toggle="popover" tabindex="0">Add new item</a></th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <?php
-                                $increment = 1;
-                                try {
-                                    $statementgetitems = $conn->prepare("SELECT * FROM items WHERE custid = ?");
-                                    $statementgetitems->execute([$orderid]);
-                                    while ($row = $statementgetitems->fetch(PDO::FETCH_NUM)) {
-                                ?>
-                                        <tr>
-                                            <td><?php echo $increment++ ?></td>
-                                            <td><?php echo $row[1]; ?></td>
-                                            <td>
-                                                <button class="btn btn-primary btn-sm callpapertypepopover" data-toggle="popover" id="papertypebtn<?php echo $row[0]; ?>">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark" viewBox="0 0 16 16">
-                                                        <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z" />
-                                                    </svg>
-                                                    Edit
-                                                </button>
-                                                <br>RM 0.00
-                                            </td>
-                                            <td><?php
-                                                $statustext = "";
-                                                $badgecolor = "";
-                                                if (strtolower($row[5]) == 'printing') {
-                                                    $statustext = "Printing";
-                                                    $badgecolor = "primary";
-                                                } else if (strtolower($row[5]) == 'complete') {
-                                                    $statustext = "Complete";
-                                                    $badgecolor = "success";
-                                                } else if (strtolower($row[5]) == 'failed') {
-                                                    $statustext = "Print failed";
-                                                    $badgecolor = "danger";
-                                                } else if (strtolower($row[5]) == 'cancelled') {
-                                                    $statustext = "Print cancelled";
-                                                    $badgecolor = "danger";
-                                                }
-                                                ?>
-                                                <span class="badge rounded-pill bg-<?php echo $badgecolor ?>"><?php echo $statustext ?></span>
-                                            </td>
-                                        </tr>
-                                <?php
-                                    }
-                                } catch (PDOException $e) {
-                                    echo $e->getMessage();
-                                }
-                                ?>
+                            <tbody id="ordertabledata">
+
                             </tbody>
                         </table>
                     </div>
@@ -203,6 +159,43 @@ if (isset($_COOKIE['managerusercookie'])) {
             </div>
         </div>
     </div>
+    <script>
+        window.onload = function() {
+            getordertabledata(<?php echo $orderid ?>);
+        };
+
+        function getordertabledata(orderid) {
+            if (orderid.length == 0) {
+                document.getElementById("ordertabledata").innerHTML = "";
+                return;
+            } else {
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("ordertabledata").innerHTML = this.responseText;
+                    }
+                };
+                xmlhttp.open("GET", "ajaxordertable.php?order=" + orderid, true);
+                xmlhttp.send();
+            }
+        }
+
+        function getitemdatatomodal(orderid) {
+            if (orderid.length == 0) {
+                document.getElementById("edititemdatamodal").innerHTML = "";
+                return;
+            } else {
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("edititemdatamodal").innerHTML = this.responseText;
+                    }
+                };
+                xmlhttp.open("GET", "ajaxedititemdatamodal.php?order=" + orderid, true);
+                xmlhttp.send();
+            }
+        }
+    </script>
 </body>
 
 </html>
