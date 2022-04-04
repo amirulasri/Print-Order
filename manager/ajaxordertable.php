@@ -17,7 +17,7 @@ try {
                     </svg>
                     Edit
                 </button>
-                <br>RM 0.00
+                <br>RM <?php echo $row[8]; ?>
             </td>
             <td><?php
                 $statustext = "";

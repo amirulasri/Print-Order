@@ -1,5 +1,8 @@
 <?php
+include('../conn.php');
+$manageruser = "";
 if (isset($_COOKIE['managerusercookie'])) {
+    $manageruser = $_COOKIE['managerusercookie'];
 } else {
     echo "FAILED COOKIE";
     die(header('location: login'));
@@ -96,21 +99,42 @@ if (isset($_COOKIE['managerusercookie'])) {
                         <table class="table table-dark">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>Username</th>
                                     <th>Total pages</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>12312</td>
-                                    <td>13</td>
-                                    <td><button class="btn btn-primary">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-                                                <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
-                                            </svg>
-                                        </button></td>
-                                </tr>
+                                <?php
+                                try {
+                                    $statementgetitems = $conn->prepare("SELECT * FROM orders WHERE manageruser = ?");
+                                    $statementgetitems->execute([$manageruser]);
+                                    while ($row = $statementgetitems->fetch(PDO::FETCH_NUM)) {
+                                ?>
+                                        <tr>
+                                            <td><?php echo $row[1] ?></td>
+                                            <td><?php
+                                                $statementgetpage = $conn->prepare("SELECT * FROM items WHERE orderid = ?");
+                                                $statementgetpage->execute([$row[0]]);
+                                                $totalpage = 0;
+                                                while ($rowpage = $statementgetpage->fetch(PDO::FETCH_NUM)) {
+                                                    $totalpage += (intval($rowpage[2]) + intval($rowpage[3]));
+                                                }
+                                                echo $totalpage; ?></td>
+                                            <td>
+                                                <button class="btn btn-primary" onclick="window.location='editorder?order=<?php echo $row[0] ?>'">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                                                        <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+                                                    </svg>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                <?php
+                                    }
+                                } catch (PDOException $e) {
+                                    echo $e->getMessage();
+                                }
+                                ?>
                             </tbody>
                         </table>
                     </div>

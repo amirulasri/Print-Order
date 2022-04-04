@@ -91,18 +91,18 @@ if (isset($_COOKIE['managerusercookie'])) {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="additemprocess" method="post">
+                    <form action="additemprocess" method="post" id="additemform">
                         File name
-                        <input type="text" class="form-control" name="itemname"><br>
+                        <input type="text" class="form-control" name="itemname" required><br>
                         Paper Type B-Black White C-Color
-                        <select name="paperid" id="" class="form-control">
+                        <select name="paperid" id="" class="form-control" required>
                             <?php
                             try {
                                 $statementgetitems = $conn->prepare("SELECT * FROM papertype");
                                 $statementgetitems->execute();
                                 while ($row = $statementgetitems->fetch(PDO::FETCH_NUM)) {
                             ?>
-                                    <option value="<?php echo $row[0] ?>"><?php echo $row[1] ?>      B-RM<?php echo $row[2] ?> C-RM<?php echo $row[3] ?></option>
+                                    <option value="<?php echo $row[0] ?>"><?php echo $row[1] ?> B-RM<?php echo $row[3] ?> C-RM<?php echo $row[2] ?></option>
                             <?php
                                 }
                             } catch (PDOException $e) {
@@ -111,15 +111,24 @@ if (isset($_COOKIE['managerusercookie'])) {
                             ?>
                         </select><br>
                         Black white quantity
-                        <input type="number" name="blackquantity" class="form-control"><br>
+                        <input type="number" name="blackquantity" class="form-control" required><br>
                         Color quantity
-                        <input type="number" name="colorquantity" class="form-control">
+                        <input type="number" name="colorquantity" class="form-control" required><br>
+                        Status
+                        <select class="form-control" name="statusprint" id="" required>
+                            <option value="printing">Printing</option>
+                            <option value="complete">Complete</option>
+                            <option value="failed">Failed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select><br>
+                        Progress
+                        <input type="range" min="0" max="1" step="0.01" value="0" name="progress" class="form-range" required>
                         <input type="hidden" name="orderid" value="<?php echo $orderid ?>">
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <input type="submit" value="Save" class="btn btn-primary" form="additemform">
                 </div>
             </div>
         </div>
