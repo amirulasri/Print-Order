@@ -6,7 +6,7 @@ $manageruser = "";
 //CUSTOMER DATA
 $custname = "";
 $printabout = "";
-$email = "";
+$phoneno = "";
 
 if (isset($_COOKIE['managerusercookie'])) {
     $manageruser = $_COOKIE['managerusercookie'];
@@ -18,13 +18,13 @@ if (isset($_COOKIE['managerusercookie'])) {
             if (isset($_GET['order'])) {
                 $orderid = $_GET['order'];
                 try {
-                    $statementgetorder = $conn->prepare("SELECT * FROM orders WHERE custid = ?");
+                    $statementgetorder = $conn->prepare("SELECT * FROM orders INNER JOIN customerlogin ON orders.customerid = customerlogin.id WHERE orderid = ?");
                     $statementgetorder->execute([$orderid]);
                     $resultgetorder = $statementgetorder->fetch();
-                    if (!empty($resultgetorder['custid'])) {
-                        $custname = $resultgetorder['custname'];
+                    if (!empty($resultgetorder['orderid'])) {
+                        $custname = $resultgetorder['fullname'];
                         $printabout = $resultgetorder['printabout'];
-                        $email = $resultgetorder['email'];
+                        $phoneno = $resultgetorder['phoneno'];
                     } else {
                         echo "NO DATA CUSTOMER";
                         die();
@@ -82,6 +82,47 @@ if (isset($_COOKIE['managerusercookie'])) {
             </div>
         </div>
     </div>
+    <!-- Modal Add Item -->
+    <div class="modal fade" id="additemmodal" tabindex="-1" aria-labelledby="edititem" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="additemprocess" method="post">
+                        File name
+                        <input type="text" class="form-control" name="itemname"><br>
+                        Paper Type B-Black White C-Color
+                        <select name="paperid" id="" class="form-control">
+                            <?php
+                            try {
+                                $statementgetitems = $conn->prepare("SELECT * FROM papertype");
+                                $statementgetitems->execute();
+                                while ($row = $statementgetitems->fetch(PDO::FETCH_NUM)) {
+                            ?>
+                                    <option value="<?php echo $row[0] ?>"><?php echo $row[1] ?>      B-RM<?php echo $row[2] ?> C-RM<?php echo $row[3] ?></option>
+                            <?php
+                                }
+                            } catch (PDOException $e) {
+                                echo $e->getMessage();
+                            }
+                            ?>
+                        </select><br>
+                        Black white quantity
+                        <input type="number" name="blackquantity" class="form-control"><br>
+                        Color quantity
+                        <input type="number" name="colorquantity" class="form-control">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container">
         <br>
         <div class="receiptframe">
@@ -119,9 +160,9 @@ if (isset($_COOKIE['managerusercookie'])) {
                                     <td><?php echo $custname ?></td>
                                 </tr>
                                 <tr>
-                                    <td>Email</td>
-                                    <td><?php if (!empty($email)) {
-                                            echo $email;
+                                    <td>Phone No</td>
+                                    <td><?php if (!empty($phoneno)) {
+                                            echo $phoneno;
                                         } else {
                                             echo "-";
                                         } ?></td>
@@ -138,7 +179,10 @@ if (isset($_COOKIE['managerusercookie'])) {
                         <table class="table table-dark">
                             <thead>
                                 <tr>
-                                    <th colspan="4">Items <a class="btn btn-primary btn-sm callAdditempopover" data-toggle="popover" tabindex="0">Add new item</a></th>
+                                    <th colspan="4">Items <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#additemmodal">
+                                            Add Item
+                                        </button>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody id="ordertabledata">
@@ -180,8 +224,8 @@ if (isset($_COOKIE['managerusercookie'])) {
             }
         }
 
-        function getitemdatatomodal(orderid) {
-            if (orderid.length == 0) {
+        function getitemdatatomodal(itemid) {
+            if (itemid.length == 0) {
                 document.getElementById("edititemdatamodal").innerHTML = "";
                 return;
             } else {
@@ -191,7 +235,7 @@ if (isset($_COOKIE['managerusercookie'])) {
                         document.getElementById("edititemdatamodal").innerHTML = this.responseText;
                     }
                 };
-                xmlhttp.open("GET", "ajaxedititemdatamodal.php?order=" + orderid, true);
+                xmlhttp.open("GET", "ajaxedititemdatamodal.php?item=" + itemid, true);
                 xmlhttp.send();
             }
         }

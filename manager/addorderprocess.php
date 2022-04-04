@@ -2,17 +2,27 @@
 include("../conn.php");
 if (isset($_COOKIE['managerusercookie'])) {
     $manageruser = $_COOKIE['managerusercookie'];
-    if (isset($_POST['custname']) && isset($_POST['printabout'])) {
-        if (!empty($_POST['custname']) && !empty($_POST['printabout'])) {
-            $custname = $_POST['custname'];
+    if (isset($_POST['phoneno']) && isset($_POST['printabout'])) {
+        if (!empty($_POST['phoneno']) && !empty($_POST['printabout'])) {
+            $phoneno = $_POST['phoneno'];
             $printabout = $_POST['printabout'];
+            $date = date('d-M-y');
             try {
-                $addprintorder = "INSERT INTO orders VALUES (NULL, '$custname', '$printabout', '', '$manageruser')";
-                $conn->exec($addprintorder);
-                $lastid = $conn->lastInsertId();
-                header('location: editorder?order='.$lastid);
+                $statementgetcustid = $conn->prepare("SELECT id FROM customerlogin WHERE phoneno = ?");
+                $statementgetcustid->execute([$phoneno]);
+                $row = $statementgetcustid->fetch(PDO::FETCH_NUM);
+                $id = $row[0];
+                if(!empty($id)){
+                    $addprintorder = "INSERT INTO orders VALUES (NULL, '$printabout', '$date', '$id')";
+                    $conn->exec($addprintorder);
+                    $lastid = $conn->lastInsertId();
+                    header('location: editorder?order=' . $lastid);
+                }else{
+                    header('location: printorder?erroraddorder');
+                }
+
             } catch (PDOException $e) {
-                header('location: printorder');
+                //header('location: printorder');
                 echo $e->getMessage();
             }
         }
