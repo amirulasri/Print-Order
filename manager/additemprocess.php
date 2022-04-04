@@ -15,15 +15,20 @@ if (isset($_COOKIE['managerusercookie'])) {
                 $statementgetpaperprice = $conn->prepare("SELECT * FROM papertype WHERE paperid = ?");
                 $statementgetpaperprice->execute([$paperid]);
                 $row = $statementgetpaperprice->fetch(PDO::FETCH_NUM);
+                $papertypename = $row[1];
                 $colorprice = $row[2];
                 $blackprice = $row[3];
+
+                //CUSTOMER ID
+                $statementgetuserdata = $conn->prepare("SELECT id FROM customer WHERE username = ?");
+                $statementgetuserdata->execute([$manageruser]);
+                $rowuserdata = $statementgetuserdata->fetch(PDO::FETCH_NUM);
+                $userid = $rowuserdata[0];
                 
 
-                if(!empty($id)){
-                    $addprintorder = "INSERT INTO orders VALUES (NULL, '$printabout', '$date', '$id')";
-                    $conn->exec($addprintorder);
-                    $lastid = $conn->lastInsertId();
-                    header('location: editorder?order=' . $lastid);
+                if(!empty($userid)){
+                    $additem = "INSERT INTO orders VALUES (NULL, '$printabout', '$date', '$id')";
+                    $conn->exec($additem);
                 }else{
                     header('location: printorder?erroraddorder');
                 }

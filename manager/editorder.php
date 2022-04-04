@@ -114,6 +114,7 @@ if (isset($_COOKIE['managerusercookie'])) {
                         <input type="number" name="blackquantity" class="form-control"><br>
                         Color quantity
                         <input type="number" name="colorquantity" class="form-control">
+                        <input type="hidden" name="orderid" value="<?php echo $orderid ?>">
                     </form>
                 </div>
                 <div class="modal-footer">
