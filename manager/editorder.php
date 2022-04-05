@@ -30,12 +30,16 @@ if (isset($_COOKIE['managerusercookie'])) {
                         die();
                     }
 
-                    //GET TOTALPRICE
+                    //GET TOTALPRICE AND PROGRESS
                     $totalitemprice = 0;
-                    $statementgetitemprice = $conn->prepare("SELECT price FROM items WHERE orderid = ?");
+                    $progressbar = 0;
+                    $countitem = 0;
+                    $statementgetitemprice = $conn->prepare("SELECT price, progressbar FROM items WHERE orderid = ?");
                     $statementgetitemprice->execute([$orderid]);
                     while ($row = $statementgetitemprice->fetch(PDO::FETCH_NUM)) {
+                        $countitem++;
                         $totalitemprice += $row[0];
+                        $progressbar += $row[1];
                     }
                 } catch (PDOException $e) {
                     echo $e->getMessage(); //IF ORDER NOT FOUND OR ERROR
@@ -156,9 +160,21 @@ if (isset($_COOKIE['managerusercookie'])) {
                 <div class="col-sm-12">
                     <br>
                     <div class="inframe">
-                        <p style="color: white; font-weight:500; margin: 0;">Status: Printing</p>
+                        <p style="color: white; font-weight:500; margin: 0;">Status: <?php
+                        if($countitem != 0){
+                            echo ($progressbar/$countitem)*100;
+                        }else{
+                            echo 0;
+                        }
+                         ?>% complete</p>
                         <div class="progress">
-                            <div class="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 10%"></div>
+                            <div class="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: <?php
+                            if($countitem != 0){
+                                echo ($progressbar/$countitem)*100;
+                            }else{
+                                echo 0;
+                            }
+                             ?>%"></div>
                         </div>
                     </div>
                 </div>
@@ -261,7 +277,7 @@ if (isset($_COOKIE['managerusercookie'])) {
             }
         }
 
-        function getitemdatatomodal(itemid) {
+        function getitemdatatomodal(itemid, orderid) {
             if (itemid.length == 0) {
                 document.getElementById("edititemdatamodal").innerHTML = "";
                 return;
@@ -276,7 +292,7 @@ if (isset($_COOKIE['managerusercookie'])) {
                 xmlhttp.send();
             }
             deletebutton = document.getElementById("deleteitembutton");
-            deletebutton.setAttribute("onclick", "window.location='deleteitemprocess?item="+itemid+"'");
+            deletebutton.setAttribute("onclick", "window.location='deleteitemprocess?item="+itemid+"&order="+orderid+"'");
         }
     </script>
 </body>
