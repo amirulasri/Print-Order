@@ -218,7 +218,7 @@ if (isset($_COOKIE['managerusercookie'])) {
                             <tbody>
                                 <tr>
                                     <td>URL</td>
-                                    <td>https://</td>
+                                    <td><input class="form-control" type="text" name="" id="" value="https://amirulasri.tplinkdns.com/printorderapp/orderview/<?php echo $orderid ?>" readonly></td>
                                 </tr>
                             </tbody>
                         </table>
