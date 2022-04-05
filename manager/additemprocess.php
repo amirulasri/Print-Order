@@ -42,7 +42,7 @@ if (isset($_COOKIE['managerusercookie'])) {
             $totalblackprice = $blackprice * $blackquantity;
             $totalcolorprice = $colorprice * $colorquantity;
 
-            $totalprice = (intval($totalblackprice) + intval($totalcolorprice));
+            $totalprice = $totalblackprice + $totalcolorprice;
 
             //CUSTOMER ID
             $statementgetuserdata = $conn->prepare("SELECT id FROM customerlogin WHERE username = ?");
