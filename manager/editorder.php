@@ -29,6 +29,14 @@ if (isset($_COOKIE['managerusercookie'])) {
                         echo "NO DATA CUSTOMER";
                         die();
                     }
+
+                    //GET TOTALPRICE
+                    $totalitemprice = 0;
+                    $statementgetitemprice = $conn->prepare("SELECT price FROM items WHERE orderid = ?");
+                    $statementgetitemprice->execute([$orderid]);
+                    while ($row = $statementgetitemprice->fetch(PDO::FETCH_NUM)) {
+                        $totalitemprice += $row[0];
+                    }
                 } catch (PDOException $e) {
                     echo $e->getMessage(); //IF ORDER NOT FOUND OR ERROR
                 }
@@ -76,8 +84,9 @@ if (isset($_COOKIE['managerusercookie'])) {
 
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="deleteitembutton" onclick="">Delete Item</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <input type="submit" value="Save changes" class="btn btn-primary" form="edititemform">
                 </div>
             </div>
         </div>
@@ -87,7 +96,7 @@ if (isset($_COOKIE['managerusercookie'])) {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Edit Item</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Add Item</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -111,9 +120,9 @@ if (isset($_COOKIE['managerusercookie'])) {
                             ?>
                         </select><br>
                         Black white quantity
-                        <input type="number" name="blackquantity" class="form-control" required><br>
+                        <input type="number" name="blackquantity" min="0" value="0" class="form-control" required><br>
                         Color quantity
-                        <input type="number" name="colorquantity" class="form-control" required><br>
+                        <input type="number" name="colorquantity" min="0" value="0" class="form-control" required><br>
                         Status
                         <select class="form-control" name="statusprint" id="" required>
                             <option value="printing">Printing</option>
@@ -149,13 +158,13 @@ if (isset($_COOKIE['managerusercookie'])) {
                     <div class="inframe">
                         <p style="color: white; font-weight:500; margin: 0;">Status: Printing</p>
                         <div class="progress">
-                            <div class="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                            <div class="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 10%"></div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-5">
                     <br>
                     <div class="inframe">
                         <table class="table table-dark">
@@ -176,6 +185,24 @@ if (isset($_COOKIE['managerusercookie'])) {
                                         } else {
                                             echo "-";
                                         } ?></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-sm-7">
+                    <br>
+                    <div class="inframe">
+                        <table class="table table-dark">
+                            <thead>
+                                <tr>
+                                    <th colspan="2">Share URL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>URL</td>
+                                    <td>https://</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -207,7 +234,7 @@ if (isset($_COOKIE['managerusercookie'])) {
                 <div class="col-sm-4">
                     <div class="pricedisplay">
                         Total <br>
-                        RM 0.00
+                        RM <?php echo number_format((float)$totalitemprice, 2, '.', '') ?>
                     </div>
                 </div>
             </div>
@@ -248,6 +275,8 @@ if (isset($_COOKIE['managerusercookie'])) {
                 xmlhttp.open("GET", "ajaxedititemdatamodal.php?item=" + itemid, true);
                 xmlhttp.send();
             }
+            deletebutton = document.getElementById("deleteitembutton");
+            deletebutton.setAttribute("onclick", "window.location='deleteitemprocess?item="+itemid+"'");
         }
     </script>
 </body>

@@ -2,7 +2,7 @@
 include("../conn.php");
 if (isset($_COOKIE['managerusercookie'])) {
     $manageruser = $_COOKIE['managerusercookie'];
-    if (isset($_POST['itemname']) && isset($_POST['paperid']) && isset($_POST['blackquantity']) && isset($_POST['colorquantity']) && isset($_POST['statusprint']) && isset($_POST['progress']) && isset($_POST['orderid'])) {
+    if (isset($_POST['itemname']) && isset($_POST['paperid']) && isset($_POST['blackquantity']) && isset($_POST['colorquantity']) && isset($_POST['statusprint']) && isset($_POST['progress']) && isset($_POST['itemid']) && isset($_POST['orderid'])) {
         //GET ALL DATA
         $itemname = $_POST['itemname'];
         $paperid = $_POST['paperid'];
@@ -10,6 +10,7 @@ if (isset($_COOKIE['managerusercookie'])) {
         $colorquantity = $_POST['colorquantity'];
         $statusprint = $_POST['statusprint'];
         $progress = $_POST['progress'];
+        $itemid = $_POST['itemid'];
         $orderid = $_POST['orderid'];
 
         //COLOR PROGRESS
@@ -42,7 +43,7 @@ if (isset($_COOKIE['managerusercookie'])) {
             $totalblackprice = $blackprice * $blackquantity;
             $totalcolorprice = $colorprice * $colorquantity;
 
-            $totalprice = (intval($totalblackprice) + intval($totalcolorprice));
+            $totalprice = $totalblackprice + $totalcolorprice;
 
             //CUSTOMER ID
             $statementgetuserdata = $conn->prepare("SELECT id FROM customerlogin WHERE username = ?");
@@ -51,11 +52,11 @@ if (isset($_COOKIE['managerusercookie'])) {
             $userid = $rowuserdata[0];
 
             if (!empty($userid)) {
-                $additem = "INSERT INTO items VALUES (NULL, '$itemname', '$blackquantity', '$colorquantity', '$papertypename', '$statusprint', '$progress', '$progressbarcolor', '$totalprice', '$orderid', '$userid')";
-                $conn->exec($additem);
+                $edititem = "UPDATE items SET itemname = '$itemname', blackwhitequantity = '$blackquantity', colorquantity = '$colorquantity', papertype = '$papertypename', statusprint = '$statusprint', progressbar = '$progress', progressbarcolor = '$progressbarcolor', price = '$totalprice', orderid = '$orderid', customerid = '$userid' WHERE itemid = '$itemid'";
+                $conn->exec($edititem);
                 header('location: editorder?order=' . $orderid);
             } else {
-                header('location: printorder?erroraddorder1');
+                header('location: printorder?erroreditorder1');
             }
         } catch (PDOException $e) {
             //header('location: printorder');

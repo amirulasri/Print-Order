@@ -100,6 +100,7 @@ if (isset($_COOKIE['managerusercookie'])) {
                             <thead>
                                 <tr>
                                     <th>Username</th>
+                                    <th>Print About</th>
                                     <th>Total pages</th>
                                     <th>Action</th>
                                 </tr>
@@ -107,12 +108,13 @@ if (isset($_COOKIE['managerusercookie'])) {
                             <tbody>
                                 <?php
                                 try {
-                                    $statementgetitems = $conn->prepare("SELECT * FROM orders WHERE manageruser = ?");
+                                    $statementgetitems = $conn->prepare("SELECT * FROM orders INNER JOIN customerlogin ON orders.customerid = customerlogin.id WHERE manageruser = ? ORDER BY orders.orderid DESC");
                                     $statementgetitems->execute([$manageruser]);
-                                    while ($row = $statementgetitems->fetch(PDO::FETCH_NUM)) {
+                                    while ($row = $statementgetitems->fetch()) {
                                 ?>
                                         <tr>
-                                            <td><?php echo $row[1] ?></td>
+                                            <td><?php echo $row['username'] ?></td>
+                                            <td><?php echo $row['printabout'] ?></td>
                                             <td><?php
                                                 $statementgetpage = $conn->prepare("SELECT * FROM items WHERE orderid = ?");
                                                 $statementgetpage->execute([$row[0]]);
