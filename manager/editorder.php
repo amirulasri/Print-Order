@@ -1,5 +1,6 @@
 <?php
 include("../conn.php");
+session_start();
 $orderid = "";
 $manageruser = "";
 
@@ -161,20 +162,20 @@ if (isset($_COOKIE['managerusercookie'])) {
                     <br>
                     <div class="inframe">
                         <p style="color: white; font-weight:500; margin: 0;">Status: <?php
-                        if($countitem != 0){
-                            echo ($progressbar/$countitem)*100;
-                        }else{
-                            echo 0;
-                        }
-                         ?>% complete</p>
+                                                                                        if ($countitem != 0) {
+                                                                                            echo ($progressbar / $countitem) * 100;
+                                                                                        } else {
+                                                                                            echo 0;
+                                                                                        }
+                                                                                        ?>% complete</p>
                         <div class="progress">
                             <div class="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: <?php
-                            if($countitem != 0){
-                                echo ($progressbar/$countitem)*100;
-                            }else{
-                                echo 0;
-                            }
-                             ?>%"></div>
+                                                                                                                                                if ($countitem != 0) {
+                                                                                                                                                    echo ($progressbar / $countitem) * 100;
+                                                                                                                                                } else {
+                                                                                                                                                    echo 0;
+                                                                                                                                                }
+                                                                                                                                                ?>%"></div>
                         </div>
                     </div>
                 </div>
@@ -212,13 +213,25 @@ if (isset($_COOKIE['managerusercookie'])) {
                         <table class="table table-dark">
                             <thead>
                                 <tr>
-                                    <th colspan="2">Share URL</th>
+                                    <th>Share URL</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>URL</td>
-                                    <td><input class="form-control" type="text" name="" id="" value="https://amirulasri.tplinkdns.com/printorderapp/orderview/<?php echo $orderid ?>" readonly></td>
+                                    <td>
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="inputGroupPrepend">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-link" viewBox="0 0 16 16">
+                                                    <path d="M6.354 5.5H4a3 3 0 0 0 0 6h3a3 3 0 0 0 2.83-4H9c-.086 0-.17.01-.25.031A2 2 0 0 1 7 10.5H4a2 2 0 1 1 0-4h1.535c.218-.376.495-.714.82-1z" />
+                                                    <path d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4.02 4.02 0 0 1-.82 1H12a3 3 0 1 0 0-6H9z" />
+                                                </svg>
+                                            </span>
+                                            <input type="text" class="form-control" value="https://amirulasri.tplinkdns.com/printorderapp/orderview/<?php echo $orderid ?>" readonly>
+                                            <span class="input-group-text" id="inputGroupPrepend">
+                                                <button class="btn btn-primary">Copy</button>
+                                            </span>
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -251,6 +264,13 @@ if (isset($_COOKIE['managerusercookie'])) {
                     <div class="pricedisplay">
                         Total <br>
                         RM <?php echo number_format((float)$totalitemprice, 2, '.', '') ?>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="pricedisplay">
+                        Pay <br>
+                        <input type="number" name="payamount" id="" class="form-control">
+                        <button type="submit" class="btn btn-light">Pay</button>
                     </div>
                 </div>
             </div>
@@ -292,7 +312,7 @@ if (isset($_COOKIE['managerusercookie'])) {
                 xmlhttp.send();
             }
             deletebutton = document.getElementById("deleteitembutton");
-            deletebutton.setAttribute("onclick", "window.location='deleteitemprocess?item="+itemid+"&order="+orderid+"'");
+            deletebutton.setAttribute("onclick", "window.location='deleteitemprocess?item=" + itemid + "&order=" + orderid + "'");
         }
     </script>
 </body>
